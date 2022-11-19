@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 import sys
+from unittest.mock import patch
 
 allDefs = []
 edges = {}
@@ -36,13 +37,16 @@ def trace_callback(frame, event, arg):
         edges[callerName] = toNode
     return
 
-def trace_call(file_bytes, defs, args):
+def trace_call(file_bytes, fileName, defs, args):
     global allDefs
     global edges
     allDefs = []
     edges = {}
     allDefs.extend(defs['allDefs'])
-    sys.settrace(trace_callback)
-    exec(file_bytes, locals(), locals()) # globals(), globals()
-    sys.settrace(None)
+    
+    with patch("sys.argv", [fileName] + args):
+        sys.settrace(trace_callback)
+        exec(file_bytes, locals(), locals()) # globals(), globals()
+        sys.settrace(None)
+        
     return edges

@@ -7,7 +7,7 @@ function App() {
       const data = new FormData();
       data.append('file', file);
       
-      fetch("http://127.0.0.1:8888/graph", {
+      fetch("http://127.0.0.1:8888/graph", {  //change this to your local server
         method: 'POST',
         body: data
       })

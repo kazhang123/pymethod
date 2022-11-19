@@ -1,8 +1,8 @@
 Required Downloads:
 
-Install Node.js: https://nodejs.org/en/download/
-Install python 3: https://www.python.org/downloads/
-Install flask and gunicorn by typing this in the terminal: pip3 install flask gunicorn
+Install Node.js: https://nodejs.org/en/download/.
+Install python 3: https://www.python.org/downloads/.
+Install flask and gunicorn by typing this in the terminal: pip3 install flask gunicorn.
 
 How to run:
 

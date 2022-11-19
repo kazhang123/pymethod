@@ -36,7 +36,7 @@ def trace_callback(frame, event, arg):
         edges[callerName] = toNode
     return
 
-def trace_call(file_bytes, defs):
+def trace_call(file_bytes, defs, args):
     global allDefs
     global edges
     allDefs = []

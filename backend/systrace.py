@@ -23,9 +23,6 @@ def trace_callback(frame, event, arg):
     if (callerName not in allDefs) :
         return
 
-    #print(co)
-    #print(caller)
-
     if (callerName in edges) :
         if (coName in edges[callerName]) :
             edges[callerName][coName] = edges[callerName][coName] + 1
@@ -46,7 +43,7 @@ def trace_call(file_bytes, fileName, defs, args):
     
     with patch("sys.argv", [fileName] + args):
         sys.settrace(trace_callback)
-        exec(file_bytes, locals(), locals()) # globals(), globals()
+        exec(file_bytes, locals(), locals())
         sys.settrace(None)
         
     return edges

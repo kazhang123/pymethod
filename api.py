@@ -15,10 +15,11 @@ def respond():
     response = {}
     try:
         file = request.files['file']
+        filename = file.filename
         file_bytes = file.read()
         defs = ast_parser(file_bytes)
         args = request.form.getlist('arg')
-        edges = trace_call(file_bytes, defs, args)
+        edges = trace_call(file_bytes, filename, defs, args)
         response["defs"] = defs
         response["fromToEdges"] = edges
 

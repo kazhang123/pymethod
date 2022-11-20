@@ -1,9 +1,43 @@
-import "./App.css";
-import React, { useState } from "react";
+import React, { useState, useCallback } from 'react';
+import ReactFlow, {
+  addEdge,
+  MiniMap,
+  Controls,
+  Background,
+  useNodesState,
+  useEdgesState,
+} from 'reactflow';
 
-function App() {
+import { nodes as initialNodes, edges as initialEdges } from './initial-elements';
+
+import 'reactflow/dist/style.css';
+import './App.css';
+
+const nodeTypes = { //dont know what this does
+  //custom: CustomNode,
+};
+
+const minimapStyle = {
+  height: 120,
+};
+
+const onInit = (reactFlowInstance) => console.log('flow loaded:', reactFlowInstance);
+
+const App = () => {
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [args, setArgs] = useState([]);
   const [file, setFile] = useState(null);
+
+  const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []); //dont know what this does
+
+  const edgesWithUpdatedTypes = edges.map((edge) => { //dont know what this does
+    if (edge.sourceHandle) {
+      const edgeType = nodes.find((node) => node.type === 'custom').data.selects[edge.sourceHandle];
+      edge.type = edgeType;
+    }
+    return edge;
+  });
 
   const uploadFile = (e) => {
     setFile(e.target.files[0]);
@@ -32,7 +66,6 @@ function App() {
     }
 
     fetch("http://127.0.0.1:8888/graph", {
-      //change this to your local server
       method: "POST",
       body: data,
     })
@@ -40,13 +73,31 @@ function App() {
       .then(
         (result) => {
           console.log(result);
+          let allDefs = result["defs"]["allDefs"]
+          for (var i = 0; i < allDefs.length; i++) { 
+            console.log(allDefs[i]); 
+          }
         },
         (error) => {}
       );
   };
 
   return (
-    <div>
+    <div style={{ height: 700 }}>
+      <ReactFlow
+      nodes={nodes}
+      edges={edgesWithUpdatedTypes}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      onInit={onInit}
+      fitView
+      attributionPosition="top-right"
+      nodeTypes={nodeTypes}>
+        <MiniMap style={minimapStyle} zoomable pannable />
+        <Controls />
+        <Background color="#aaa" gap={16} />
+      </ReactFlow>
       <form onSubmit={(e) => handleSubmit(e)}>
         <input type="file" onChange={uploadFile} />
         <br />
@@ -59,6 +110,6 @@ function App() {
       </form>
     </div>
   );
-}
+};
 
 export default App;

@@ -73,10 +73,6 @@ const App = () => {
       .then(
         (result) => {
           console.log(result);
-          let allDefs = result["defs"]["allDefs"]
-          for (var i = 0; i < allDefs.length; i++) { 
-            console.log(allDefs[i]); 
-          }
         },
         (error) => {}
       );

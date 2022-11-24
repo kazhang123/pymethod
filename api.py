@@ -20,7 +20,7 @@ def respond():
         args = request.form.getlist('arg')
         edges = trace_call(file_bytes, filename, defs, args)
         response["defs"] = defs
-        response["fromToEdges"] = edges
+        response["dynamicFromToEdges"] = edges
 
     except Exception as e:
         response['Error in POST: '] = str(e)

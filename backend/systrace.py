@@ -13,7 +13,7 @@ def trace_callback(frame, event, arg):
 
     co = frame.f_code
     coName = co.co_name
-    
+
     if (coName not in allDefs) :
         return
 

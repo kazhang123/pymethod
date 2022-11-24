@@ -2,6 +2,17 @@ import ast
 
 def ast_parser(file):
     tree = ast.parse(file)
+    for node in ast.walk(tree):
+        for child in ast.iter_child_nodes(node):
+            child.parent = node
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) :
+            parent = node.parent
+            while ((not isinstance(parent, ast.FunctionDef)) and (not isinstance(parent, ast.ClassDef))):
+                parent = parent.parent
+            print(ast.dump(parent, indent=4))
+    
     defs = {}
     defs["functionDefs"] = []
     defs["classDefs"] = []
@@ -27,6 +38,6 @@ def classDef(node, defs):
         if (node.name != "__init__") :
             names.append(node.name)
     definition["names"] = names
-    defs["allDefs"] += names
     defs["classDefs"] += [definition]
+    defs["allDefs"] += names
     

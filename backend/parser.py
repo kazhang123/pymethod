@@ -24,8 +24,9 @@ def classDef(node, defs):
     definition["className"] = node.name
     names = []
     for node in node.body:
-        names.append(node.name)
-        defs["allDefs"] += [node.name]
+        if (node.name != "__init__") :
+            names.append(node.name)
     definition["names"] = names
+    defs["allDefs"] += names
     defs["classDefs"] += [definition]
     

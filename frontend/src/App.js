@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback } from "react";
 import ReactFlow, {
   addEdge,
   MiniMap,
@@ -6,34 +6,89 @@ import ReactFlow, {
   Background,
   useNodesState,
   useEdgesState,
-} from 'reactflow';
+  MarkerType,
+  ConnectionLineType,
+} from "reactflow";
 
-import { nodes as initialNodes, edges as initialEdges } from './initial-elements';
+import { getGraph } from "./graph";
 
-import 'reactflow/dist/style.css';
-import './App.css';
+import "reactflow/dist/style.css";
+import "./App.css";
+import dagre from "dagre";
 
-const nodeTypes = { //dont know what this does
+const nodeTypes = {
+  //dont know what this does
   //custom: CustomNode,
 };
+
+const nodeWidth = 172;
+const nodeHeight = 36;
 
 const minimapStyle = {
   height: 120,
 };
 
-const onInit = (reactFlowInstance) => console.log('flow loaded:', reactFlowInstance);
+const onInit = (reactFlowInstance) =>
+  console.log("flow loaded:", reactFlowInstance);
 
 const App = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [args, setArgs] = useState([]);
   const [file, setFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []); //dont know what this does
+  const dagreGraph = new dagre.graphlib.Graph();
+  dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-  const edgesWithUpdatedTypes = edges.map((edge) => { //dont know what this does
+  const getLayoutedElements = (nodes, edges, direction = "TB") => {
+    const isHorizontal = direction === "LR";
+    dagreGraph.setGraph({ rankdir: direction });
+
+    nodes.forEach((node) => {
+      dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+    });
+
+    edges.forEach((edge) => {
+      dagreGraph.setEdge(edge.source, edge.target);
+    });
+
+    dagre.layout(dagreGraph);
+
+    nodes.forEach((node) => {
+      const nodeWithPosition = dagreGraph.node(node.id);
+      node.targetPosition = isHorizontal ? "left" : "top";
+      node.sourcePosition = isHorizontal ? "right" : "bottom";
+
+      // We are shifting the dagre node position (anchor=center center) to the top left
+      // so it matches the React Flow node anchor point (top left).
+      node.position = {
+        x: nodeWithPosition.x - nodeWidth / 2,
+        y: nodeWithPosition.y - nodeHeight / 2,
+      };
+
+      return node;
+    });
+
+    return { nodes, edges };
+  };
+
+  const onConnect = useCallback(
+    (params) =>
+      setEdges((eds) =>
+        addEdge(
+          { ...params, type: ConnectionLineType.SmoothStep, animated: true },
+          eds
+        )
+      ),
+    []
+  );
+
+  const edgesWithUpdatedTypes = edges.map((edge) => {
+    //dont know what this does
     if (edge.sourceHandle) {
-      const edgeType = nodes.find((node) => node.type === 'custom').data.selects[edge.sourceHandle];
+      const edgeType = nodes.find((node) => node.type === "custom").data
+        .selects[edge.sourceHandle];
       edge.type = edgeType;
     }
     return edge;
@@ -55,7 +110,7 @@ const App = () => {
     setArgs(trimmedArgs);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const data = new FormData();
@@ -65,31 +120,43 @@ const App = () => {
       data.append("arg", arg);
     }
 
-    fetch("http://127.0.0.1:8888/graph", {
+    setIsLoading(true);
+    let response = await fetch("http://127.0.0.1:8888/graph", {
       method: "POST",
       body: data,
-    })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          console.log(result);
-        },
-        (error) => {}
-      );
+    });
+    setIsLoading(false);
+
+    let jsonResponse = await response.json();
+    console.log(jsonResponse);
+
+    let graph = getGraph(jsonResponse);
+
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      graph.nodes,
+      graph.edges
+    );
+
+    setNodes(layoutedNodes);
+    setEdges(layoutedEdges);
   };
 
-  return (
+  return isLoading ? (
+    <div>I AM LOADING</div>
+  ) : (
     <div style={{ height: 700 }}>
       <ReactFlow
-      nodes={nodes}
-      edges={edgesWithUpdatedTypes}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      onInit={onInit}
-      fitView
-      attributionPosition="top-right"
-      nodeTypes={nodeTypes}>
+        nodes={nodes}
+        edges={edgesWithUpdatedTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onInit={onInit}
+        fitView
+        attributionPosition="top-right"
+        nodeTypes={nodeTypes}
+        className="layoutflow"
+      >
         <MiniMap style={minimapStyle} zoomable pannable />
         <Controls />
         <Background color="#aaa" gap={16} />

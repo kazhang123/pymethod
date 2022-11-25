@@ -69,4 +69,18 @@ We did one user study on a third year computer science student where we showed o
 - sketch the appearance of the visual component -- **We have included a sample mockup of what our visualization may look like**
 - begin research on how to generate a control flow graph and how to instrument source code. -- **We have worked with Jifeng to use systrace to record the sequence of method calls in our given user's code**
 
-
+## Milestone 5:
+### Status of final user study; any feedback and changes planned.
+- We will carry out our final user study once we have our project fully implemented.
+## Plans for final video (possible draft version).
+- We hope to have our video draft done by Monday and it will include a demo of our project with a summary of our progress and info regarding how it was developed .
+## Planned timeline for the remaining days.
+- November 25 - 27 finish project implementation
+- November 28 - 29 Bug fixes
+- November 25 - 28 Draft for video
+- November 29th Final Revisions to project & video completion
+## Progress against the timeline planned for your team, including the specific goals you defined (originally as part of Milestone 2) for Milestone 5.
+### Old Goals:
+- choose the real-world programming language to target,-- **Python has been chosen as our target**
+- sketch the appearance of the visual component -- **We have included a sample mockup of what our visualization may look like**
+- begin research on how to generate a control flow graph and how to instrument source code. -- **We are now using systrace in our application to generate our visual, we just need to incorporate the static visuals into our UI as well as adding more visualization features (like heatmap, colouring nodes etc).**

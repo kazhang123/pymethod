@@ -59,3 +59,9 @@
   margin-top: 5px;
   font-size: 10px;
 }
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

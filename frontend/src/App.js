@@ -9,12 +9,13 @@ import ReactFlow, {
   MarkerType,
   ConnectionLineType,
 } from "reactflow";
-
+import dagre from "dagre";
 import { getGraph } from "./graph";
+import Loading from "./components/Loading";
 
+import "bootstrap/dist/css/bootstrap.min.css";
 import "reactflow/dist/style.css";
 import "./App.css";
-import dagre from "dagre";
 
 const nodeTypes = {
   //dont know what this does
@@ -142,7 +143,9 @@ const App = () => {
   };
 
   return isLoading ? (
-    <div>I AM LOADING</div>
+    <div style={{ height: "100vh" }} className="loading">
+      <Loading />
+    </div>
   ) : (
     <div style={{ height: 700 }}>
       <ReactFlow

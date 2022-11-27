@@ -175,15 +175,14 @@ const App = () => {
           edges={edgesWithUpdatedTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
-          onNodeClick={(e, node) => {
-            console.log("click!", node);
-            setSelectedNode(node);
-          }}
+          onNodeClick={(e, node) => setSelectedNode(node)}
+          onPaneClick={() => setSelectedNode(null)}
           onConnect={onConnect}
           onInit={onInit}
           fitView
           attributionPosition="top-right"
           nodeTypes={nodeTypes}
+          nodesDraggable={false}
           className="layoutflow"
         >
           <MiniMap style={minimapStyle} zoomable pannable />

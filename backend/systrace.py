@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 allDefs = []
 edges = {}
+callSequence = []
 
 def trace_callback(frame, event, arg):
     if event != 'call':
@@ -23,6 +24,9 @@ def trace_callback(frame, event, arg):
     if (callerName not in allDefs) :
         return
 
+    callSequence.append(callerName)
+    callSequence.append(coName)
+
     if (callerName in edges) :
         if (coName in edges[callerName]) :
             edges[callerName][coName] = edges[callerName][coName] + 1
@@ -37,8 +41,10 @@ def trace_callback(frame, event, arg):
 def trace_call(file_bytes, fileName, defs, args):
     global allDefs
     global edges
+    global callSequence
     allDefs = []
     edges = {}
+    callSequence = []
     allDefs.extend(defs['allDefs'])
     
     with patch("sys.argv", [fileName] + args):
@@ -46,4 +52,4 @@ def trace_call(file_bytes, fileName, defs, args):
         exec(file_bytes, locals(), locals())
         sys.settrace(None)
         
-    return edges
+    return edges, callSequence

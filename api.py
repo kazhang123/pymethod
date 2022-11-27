@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 
 from flask_cors import cross_origin
-from backend.parser import ast_parser
+from backend.parser import AstParser
 from backend.systrace import trace_call
 
 app = Flask(__name__)
@@ -16,11 +16,14 @@ def respond():
         file = request.files['file']
         filename = file.filename
         file_bytes = file.read()
-        defs = ast_parser(file_bytes)
+        ast_parser = AstParser()
+        defs, static_edges = ast_parser.parse(file_bytes)
         args = request.form.getlist('arg')
-        edges = trace_call(file_bytes, filename, defs, args)
+        dynamic_edges, call_seq = trace_call(file_bytes, filename, defs, args)
         response["defs"] = defs
-        response["dynamicFromToEdges"] = edges
+        response["staticFromToEdges"] = static_edges
+        response["dynamicFromToEdges"] = dynamic_edges
+        response["callSequence"] = call_seq
 
     except Exception as e:
         response['Error in POST: '] = str(e)

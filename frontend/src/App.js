@@ -10,7 +10,7 @@ import ReactFlow, {
   ConnectionLineType,
 } from "reactflow";
 import dagre from "dagre";
-import { getGraph } from "./graph";
+import { getReactFlowGraph } from "./reactFlowGraph";
 import Loading from "./components/Loading";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -132,7 +132,7 @@ const App = () => {
     let jsonResponse = await response.json();
     console.log(jsonResponse);
 
-    let graph = getGraph(jsonResponse);
+    let graph = getReactFlowGraph(jsonResponse);
 
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       graph.nodes,

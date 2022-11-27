@@ -2,7 +2,7 @@ import { MarkerType } from "reactflow";
 
 const GRAPH_COLOURS = { BLUE: "#4782ff", RED: "#ff432e" };
 
-function getNodes(response) {
+function getReactFlowGraphNodes(response) {
   let nodes = [];
   let x = 0;
   let y = 0;
@@ -25,7 +25,7 @@ function getNodes(response) {
   return nodes;
 }
 
-function getEdges(response) {
+function getReactFlowGraphEdges(response) {
   let edges = [];
 
   const staticEdges = response.defs.staticFromToEdges;
@@ -57,9 +57,9 @@ function getEdges(response) {
   return edges;
 }
 
-export function getGraph(response) {
+export function getReactFlowGraph(response) {
   return {
-    nodes: getNodes(response),
-    edges: getEdges(response),
+    nodes: getReactFlowGraphNodes(response),
+    edges: getReactFlowGraphEdges(response),
   };
 }

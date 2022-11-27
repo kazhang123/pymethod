@@ -13,6 +13,7 @@ function getNodes(response) {
       id: def,
       data: {
         label: `${def}()`,
+        centrality: 0.8,
       },
       position: {
         x: x,

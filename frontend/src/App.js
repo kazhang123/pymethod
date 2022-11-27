@@ -35,6 +35,7 @@ const onInit = (reactFlowInstance) =>
 const App = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [selectedNode, setSelectedNode] = useState(null);
   const [args, setArgs] = useState([]);
   const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -142,28 +143,48 @@ const App = () => {
     setEdges(layoutedEdges);
   };
 
+  const getSelectedFunctionName = () => {
+    if (selectedNode == null || selectedNode.data == null || selectedNode.data.label == null) return "";
+    return selectedNode.data.label;
+  }
+
+  const getSelectedCentralityScore = () => {
+    if (selectedNode == null || selectedNode.data == null || selectedNode.data.centrality == null) return "";
+    return selectedNode.data.centrality;
+  }
+
   return isLoading ? (
     <div style={{ height: "100vh" }} className="loading">
       <Loading />
     </div>
   ) : (
-    <div style={{ height: 700 }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edgesWithUpdatedTypes}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onInit={onInit}
-        fitView
-        attributionPosition="top-right"
-        nodeTypes={nodeTypes}
-        className="layoutflow"
-      >
-        <MiniMap style={minimapStyle} zoomable pannable />
-        <Controls />
-        <Background color="#aaa" gap={16} />
-      </ReactFlow>
+    <div style={{ height: "100vh" }}>
+      <div className="selected-node-info-display">
+        <p>{"Selected Node: " + getSelectedFunctionName()}</p>
+        <p>{"Closeness Centrality: " + getSelectedCentralityScore()}</p>
+      </div>
+      <div style={{ height: "85%" }}>
+        <ReactFlow
+          nodes={nodes}
+          edges={edgesWithUpdatedTypes}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onNodeClick={(e, node) => {
+            console.log("click!", node);
+            setSelectedNode(node);
+          }}
+          onConnect={onConnect}
+          onInit={onInit}
+          fitView
+          attributionPosition="top-right"
+          nodeTypes={nodeTypes}
+          className="layoutflow"
+        >
+          <MiniMap style={minimapStyle} zoomable pannable />
+          <Controls />
+          <Background color="#aaa" gap={16} />
+        </ReactFlow>
+      </div>
       <form onSubmit={(e) => handleSubmit(e)}>
         <input type="file" onChange={uploadFile} />
         <br />

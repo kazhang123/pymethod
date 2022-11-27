@@ -11,12 +11,16 @@ import ReactFlow, {
 } from "reactflow";
 import dagre from "dagre";
 import { getReactFlowGraph } from "./reactFlowGraph";
-import { calculateCentralityScores, addCentralityScores } from "./graph/closenessCentrality";
+import {
+  calculateCentralityScores,
+  addCentralityScores,
+} from "./graph/closenessCentrality";
 import Loading from "./components/Loading";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "reactflow/dist/style.css";
 import "./App.css";
+import Sequence from "./components/Sequence";
 
 const nodeTypes = {
   //dont know what this does
@@ -40,6 +44,7 @@ const App = () => {
   const [args, setArgs] = useState([]);
   const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [sequence, setSequence] = useState([]);
 
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -137,7 +142,10 @@ const App = () => {
 
     let centralityScores = calculateCentralityScores(jsonResponse);
     let reactFlowGraph = getReactFlowGraph(jsonResponse);
-    let reactFlowGraphWithCentrality = addCentralityScores(reactFlowGraph, centralityScores);
+    let reactFlowGraphWithCentrality = addCentralityScores(
+      reactFlowGraph,
+      centralityScores
+    );
 
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       reactFlowGraphWithCentrality.nodes,
@@ -146,17 +154,28 @@ const App = () => {
 
     setNodes(layoutedNodes);
     setEdges(layoutedEdges);
+    setSequence(jsonResponse.callSequence);
   };
 
   const getSelectedFunctionName = () => {
-    if (selectedNode == null || selectedNode.data == null || selectedNode.data.label == null) return "";
+    if (
+      selectedNode == null ||
+      selectedNode.data == null ||
+      selectedNode.data.label == null
+    )
+      return "";
     return selectedNode.data.label;
-  }
+  };
 
   const getSelectedCentralityScore = () => {
-    if (selectedNode == null || selectedNode.data == null || selectedNode.data.centrality == null) return "";
+    if (
+      selectedNode == null ||
+      selectedNode.data == null ||
+      selectedNode.data.centrality == null
+    )
+      return "";
     return selectedNode.data.centrality;
-  }
+  };
 
   return isLoading ? (
     <div style={{ height: "100vh" }} className="loading">
@@ -164,11 +183,14 @@ const App = () => {
     </div>
   ) : (
     <div style={{ height: "100vh" }}>
-      {(selectedNode != null) &&
-      <div className="selected-node-info-display">
-        <p><strong>{getSelectedFunctionName()}</strong></p>
-        <p>{"Centrality Score: " + getSelectedCentralityScore()}</p>
-      </div>}
+      {selectedNode != null && (
+        <div className="selected-node-info-display">
+          <p>
+            <strong>{getSelectedFunctionName()}</strong>
+          </p>
+          <p>{"Centrality Score: " + getSelectedCentralityScore()}</p>
+        </div>
+      )}
       <div style={{ height: "85%" }}>
         <ReactFlow
           nodes={nodes}
@@ -190,16 +212,28 @@ const App = () => {
           <Background color="#aaa" gap={16} />
         </ReactFlow>
       </div>
-      <form onSubmit={(e) => handleSubmit(e)}>
-        <input type="file" onChange={uploadFile} />
-        <br />
-        <label>
-          Program Input:
-          <input type="text" name="name" onChange={(e) => handleArgInput(e)} />
-        </label>
-        <br />
-        <input type="submit" value="Submit" />
-      </form>
+      <div style={{ display: "inline-block" }}>
+        <form
+          style={{ display: "inline-block" }}
+          onSubmit={(e) => handleSubmit(e)}
+        >
+          <input type="file" onChange={uploadFile} />
+          <br />
+          <label>
+            Program Input:
+            <input
+              type="text"
+              name="name"
+              onChange={(e) => handleArgInput(e)}
+            />
+          </label>
+          <br />
+          <input type="submit" value="Submit" />
+        </form>
+        <div style={{ float: "right" }}>
+          <Sequence sequence={sequence} />
+        </div>
+      </div>
     </div>
   );
 };

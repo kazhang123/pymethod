@@ -28,7 +28,7 @@ function getReactFlowGraphNodes(response) {
 function getReactFlowGraphEdges(response) {
   let edges = [];
 
-  const staticEdges = response.defs.staticFromToEdges;
+  const staticEdges = response.staticFromToEdges;
   const dynamicEdges = response.dynamicFromToEdges;
 
   for (let caller of Object.keys(staticEdges)) {

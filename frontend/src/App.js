@@ -11,6 +11,7 @@ import ReactFlow, {
 } from "reactflow";
 import dagre from "dagre";
 import { getReactFlowGraph } from "./reactFlowGraph";
+import { calculateCentralityScores, addCentralityScores } from "./graph/closenessCentrality";
 import Loading from "./components/Loading";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -115,6 +116,8 @@ const App = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setSelectedNode(null);
+
     const data = new FormData();
     data.append("file", file);
 
@@ -132,11 +135,13 @@ const App = () => {
     let jsonResponse = await response.json();
     console.log(jsonResponse);
 
-    let graph = getReactFlowGraph(jsonResponse);
+    let centralityScores = calculateCentralityScores(jsonResponse);
+    let reactFlowGraph = getReactFlowGraph(jsonResponse);
+    let reactFlowGraphWithCentrality = addCentralityScores(reactFlowGraph, centralityScores);
 
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-      graph.nodes,
-      graph.edges
+      reactFlowGraphWithCentrality.nodes,
+      reactFlowGraphWithCentrality.edges
     );
 
     setNodes(layoutedNodes);
@@ -159,10 +164,11 @@ const App = () => {
     </div>
   ) : (
     <div style={{ height: "100vh" }}>
+      {(selectedNode != null) &&
       <div className="selected-node-info-display">
-        <p>{"Selected Node: " + getSelectedFunctionName()}</p>
-        <p>{"Closeness Centrality: " + getSelectedCentralityScore()}</p>
-      </div>
+        <p><strong>{getSelectedFunctionName()}</strong></p>
+        <p>{"Centrality Score: " + getSelectedCentralityScore()}</p>
+      </div>}
       <div style={{ height: "85%" }}>
         <ReactFlow
           nodes={nodes}

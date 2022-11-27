@@ -13,6 +13,7 @@ function getReactFlowGraphNodes(response) {
       id: def,
       data: {
         label: `${def}()`,
+        centrality: -1,
       },
       position: {
         x: x,

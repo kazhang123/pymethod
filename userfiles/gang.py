@@ -5,3 +5,5 @@ def gang() :
     fruits = ["apple", "banana", "cherry"]
     for x in fruits:
         ganggang()
+
+gang()

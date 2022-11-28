@@ -16,15 +16,17 @@ import {
   addCentralityScores,
 } from "./graph/closenessCentrality";
 import Loading from "./components/Loading";
-
+import 'reactflow/dist/base.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "reactflow/dist/style.css";
 import "./App.css";
+import './tailwind.config.js';
+import CustomNode from './CustomNode';
 import Sequence from "./components/Sequence";
 
 const nodeTypes = {
   //dont know what this does
-  //custom: CustomNode,
+  custom: CustomNode,
 };
 
 const nodeWidth = 172;
@@ -32,6 +34,7 @@ const nodeHeight = 36;
 
 const minimapStyle = {
   height: 120,
+  maskColor: "#e3d5ca"
 };
 
 const onInit = (reactFlowInstance) =>
@@ -177,6 +180,14 @@ const App = () => {
     return selectedNode.data.centrality;
   };
 
+  const reactFlowStyle = {
+    background: "#e3d5ca",
+    width: '100%',
+    height: 300,
+  };
+
+
+
   return isLoading ? (
     <div style={{ height: "100vh" }} className="loading">
       <Loading />
@@ -193,6 +204,7 @@ const App = () => {
       )}
       <div style={{ height: "85%" }}>
         <ReactFlow
+          style={reactFlowStyle}
           nodes={nodes}
           edges={edgesWithUpdatedTypes}
           onNodesChange={onNodesChange}
@@ -207,9 +219,14 @@ const App = () => {
           nodesDraggable={false}
           className="layoutflow"
         >
-          <MiniMap style={minimapStyle} zoomable pannable />
+          <MiniMap style={minimapStyle}
+          zoomable
+          pannable
+          maskColor="#9a8c98"
+          nodeColor="#f5ebe0" 
+        />
           <Controls />
-          <Background color="#aaa" gap={16} />
+          <Background color="#4a4e69" gap={16} />
         </ReactFlow>
       </div>
       <div style={{ display: "inline-block" }}>

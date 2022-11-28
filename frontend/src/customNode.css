@@ -1,0 +1,30 @@
+.react-flow__node {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-radius: 0.375rem;
+    border-width: 2px;
+    border-color: #cbd5e0;
+    overflow-wrap: break-word;
+}
+
+
+.misc {
+    margin-left: 0.5rem;
+
+}
+
+.name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    justify-content: center;
+    text-align: center;
+}
+
+.handle {
+    width: 16rem;
+    background-color: #38b2ac;
+}
+

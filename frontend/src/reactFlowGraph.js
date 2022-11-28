@@ -11,6 +11,13 @@ function getReactFlowGraphNodes(response) {
     y += 10;
     nodes.push({
       id: def,
+      type: "custom",
+      style: {
+        background: "#f5ebe0",
+        color: "#4a4e69",
+        fontSize: "12px",
+        fontFamily: "Helvetica",
+      },
       data: {
         label: `${def}()`,
         centrality: -1,
@@ -48,6 +55,7 @@ function getReactFlowGraphEdges(response) {
           stroke: GRAPH_COLOURS.RED,
         };
         newEdge.markerEnd.color = GRAPH_COLOURS.RED;
+        newEdge.animated = true;
       }
 
       edges.push(newEdge);

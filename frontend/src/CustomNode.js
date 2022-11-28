@@ -24,8 +24,8 @@ function CustomNode({ data }) {
         <div className="rounded-full w-12 h-12 flex justify-center items-center bg-gray-100">
           {data.emoji}
         </div>
-        <div className="idk">
-          <div className="idk2">{data.label}</div>
+        <div className="misc">
+          <div className="name">{data.label}</div>
         </div>
       </div>
 

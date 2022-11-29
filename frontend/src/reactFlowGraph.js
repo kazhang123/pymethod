@@ -52,10 +52,11 @@ function getReactFlowGraphEdges(response) {
       // colour in dynamic edges
       if (caller in dynamicEdges && callee in dynamicEdges[caller]) {
         newEdge.style = {
-          stroke: GRAPH_COLOURS.RED,
+          stroke: GRAPH_COLOURS.BLUE,
         };
-        newEdge.markerEnd.color = GRAPH_COLOURS.RED;
+        newEdge.markerEnd.color = GRAPH_COLOURS.BLUE;
         newEdge.animated = true;
+        newEdge.isDynamic = true;
       }
 
       edges.push(newEdge);
@@ -75,6 +76,8 @@ export function getReactFlowGraph(response) {
 export function addCentralityEdgeColours(reactFlowGraph) {
   const { nodes, edges } = reactFlowGraph;
 
+  console.log("EDGES");
+  console.log(edges);
   let maxCentrality = Number.MIN_SAFE_INTEGER;
   let nodeCentralityLookup = {};
 
@@ -98,16 +101,20 @@ export function addCentralityEdgeColours(reactFlowGraph) {
       ...edge,
       style: {
         stroke:
-          nodeCentrality > midCentrality
+          nodeCentrality > midCentrality && edge.isDynamic
             ? GRAPH_COLOURS.RED
-            : GRAPH_COLOURS.BLUE,
+            : edge.isDynamic
+            ? GRAPH_COLOURS.BLUE
+            : null,
       },
       markerEnd: {
         ...edge.markerEnd,
         color:
-          nodeCentrality > midCentrality
+          nodeCentrality > midCentrality && edge.isDynamic
             ? GRAPH_COLOURS.RED
-            : GRAPH_COLOURS.BLUE,
+            : edge.isDynamic
+            ? GRAPH_COLOURS.BLUE
+            : null,
       },
     };
     newEdges.push(newEdge);

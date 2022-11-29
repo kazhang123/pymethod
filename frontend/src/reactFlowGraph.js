@@ -71,3 +71,47 @@ export function getReactFlowGraph(response) {
     edges: getReactFlowGraphEdges(response),
   };
 }
+
+export function addCentralityEdgeColours(reactFlowGraph) {
+  const { nodes, edges } = reactFlowGraph;
+
+  let maxCentrality = Number.MIN_SAFE_INTEGER;
+  let nodeCentralityLookup = {};
+
+  for (let node of nodes) {
+    if (node.data.centrality > maxCentrality) {
+      maxCentrality = node.data.centrality;
+    }
+    nodeCentralityLookup[node.id] = node.data.centrality;
+  }
+
+  let midCentrality = maxCentrality / 2;
+
+  let newEdges = [];
+
+  for (let edge of edges) {
+    const { source } = edge;
+    const nodeCentrality = nodeCentralityLookup[source];
+
+    // colour outgoing edges of relatively central nodes red
+    let newEdge = {
+      ...edge,
+      style: {
+        stroke:
+          nodeCentrality > midCentrality
+            ? GRAPH_COLOURS.RED
+            : GRAPH_COLOURS.BLUE,
+      },
+      markerEnd: {
+        ...edge.markerEnd,
+        color:
+          nodeCentrality > midCentrality
+            ? GRAPH_COLOURS.RED
+            : GRAPH_COLOURS.BLUE,
+      },
+    };
+    newEdges.push(newEdge);
+  }
+
+  return { nodes, edges: newEdges };
+}

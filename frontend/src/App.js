@@ -10,7 +10,7 @@ import ReactFlow, {
   ConnectionLineType,
 } from "reactflow";
 import dagre from "dagre";
-import { getReactFlowGraph } from "./reactFlowGraph";
+import { addCentralityEdgeColours, getReactFlowGraph } from "./reactFlowGraph";
 import {
   calculateCentralityScores,
   addCentralityScores,
@@ -139,7 +139,6 @@ const App = () => {
       method: "POST",
       body: data,
     });
-    setIsLoading(false);
 
     let jsonResponse = await response.json();
     console.log(jsonResponse);
@@ -151,14 +150,18 @@ const App = () => {
       centralityScores
     );
 
+    const { nodes: colouredNodes, edges: colouredEdges } =
+      addCentralityEdgeColours(reactFlowGraphWithCentrality);
+
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-      reactFlowGraphWithCentrality.nodes,
-      reactFlowGraphWithCentrality.edges
+      colouredNodes,
+      colouredEdges
     );
 
     setNodes(layoutedNodes);
     setEdges(layoutedEdges);
     setSequence(jsonResponse.callSequence);
+    setIsLoading(false);
   };
 
   const getSelectedFunctionName = () => {
@@ -239,7 +242,6 @@ const App = () => {
               className="form-control form-control-m"
               type="file"
               onChange={uploadFile}
-              style={{ width: "100%" }}
             />
           </div>
           <div className="form-group">

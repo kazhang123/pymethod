@@ -26,6 +26,7 @@ import "./App.css";
 // import "./tailwind.config.js";
 import CustomNode from "./CustomNode";
 import Sequence from "./components/Sequence";
+import InfoPanel from "./components/InfoPanel";
 
 const nodeTypes = {
   //dont know what this does
@@ -210,6 +211,7 @@ const App = () => {
           <p>{"Centrality Score: " + getSelectedCentralityScore()}</p>
         </div>
       )}
+      <InfoPanel />
       <div className="flow-container">
         <ReactFlow
           style={reactFlowStyle}

@@ -210,7 +210,7 @@ const App = () => {
           <p>{"Centrality Score: " + getSelectedCentralityScore()}</p>
         </div>
       )}
-      <div style={{ height: "80%" }}>
+      <div className="flow-container">
         <ReactFlow
           style={reactFlowStyle}
           nodes={nodes}

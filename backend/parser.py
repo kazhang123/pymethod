@@ -64,15 +64,18 @@ class AstParser:
 
     def functionDef(self, node):
         definition = {}
-        definition["name"] = node.name
-        self.defs["functionDefs"] += [definition]
-        self.defs["allDefs"] += [node.name]
+        # don't care about constructor
+        if (node.name != "__init__"):
+            definition["name"] = node.name
+            self.defs["functionDefs"] += [definition]
+            self.defs["allDefs"] += [node.name]
 
     def classDef(self, node):
         definition = {}
         definition["className"] = node.name
         names = []
         for node in node.body:
+            # don't care about constructor
             if (node.name != "__init__") :
                 names.append(node.name)
         definition["names"] = names

@@ -10,18 +10,21 @@ import ReactFlow, {
   ConnectionLineType,
 } from "reactflow";
 import dagre from "dagre";
-import { getReactFlowGraph } from "./reactFlowGraph";
+import {
+  addCentralityEdgeColours,
+  getReactFlowGraph,
+} from "./graph/reactFlowGraph";
 import {
   calculateCentralityScores,
   addCentralityScores,
 } from "./graph/closenessCentrality";
 import Loading from "./components/Loading";
-import 'reactflow/dist/base.css';
+import "reactflow/dist/base.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "reactflow/dist/style.css";
 import "./App.css";
-import './tailwind.config.js';
-import CustomNode from './CustomNode';
+// import "./tailwind.config.js";
+import CustomNode from "./CustomNode";
 import Sequence from "./components/Sequence";
 
 const nodeTypes = {
@@ -31,10 +34,11 @@ const nodeTypes = {
 
 const nodeWidth = 172;
 const nodeHeight = 36;
+const backgroundColour = "#e3d5ca";
 
 const minimapStyle = {
   height: 120,
-  maskColor: "#e3d5ca"
+  maskColor: "#e3d5ca",
 };
 
 const onInit = (reactFlowInstance) =>
@@ -138,7 +142,6 @@ const App = () => {
       method: "POST",
       body: data,
     });
-    setIsLoading(false);
 
     let jsonResponse = await response.json();
     console.log(jsonResponse);
@@ -150,14 +153,18 @@ const App = () => {
       centralityScores
     );
 
+    const { nodes: colouredNodes, edges: colouredEdges } =
+      addCentralityEdgeColours(reactFlowGraphWithCentrality);
+
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-      reactFlowGraphWithCentrality.nodes,
-      reactFlowGraphWithCentrality.edges
+      colouredNodes,
+      colouredEdges
     );
 
     setNodes(layoutedNodes);
     setEdges(layoutedEdges);
     setSequence(jsonResponse.callSequence);
+    setIsLoading(false);
   };
 
   const getSelectedFunctionName = () => {
@@ -181,19 +188,20 @@ const App = () => {
   };
 
   const reactFlowStyle = {
-    background: "#e3d5ca",
-    width: '100%',
+    background: backgroundColour,
+    width: "100%",
     height: 300,
   };
 
-
-
   return isLoading ? (
-    <div style={{ height: "100vh" }} className="loading">
+    <div
+      style={{ background: backgroundColour, height: "100vh" }}
+      className="loading"
+    >
       <Loading />
     </div>
   ) : (
-    <div style={{ height: "100vh" }}>
+    <div style={{ height: "100vh", background: backgroundColour }}>
       {selectedNode != null && (
         <div className="selected-node-info-display">
           <p>
@@ -202,7 +210,7 @@ const App = () => {
           <p>{"Centrality Score: " + getSelectedCentralityScore()}</p>
         </div>
       )}
-      <div style={{ height: "85%" }}>
+      <div style={{ height: "80%" }}>
         <ReactFlow
           style={reactFlowStyle}
           nodes={nodes}
@@ -219,33 +227,49 @@ const App = () => {
           nodesDraggable={false}
           className="layoutflow"
         >
-          <MiniMap style={minimapStyle}
-          zoomable
-          pannable
-          maskColor="#9a8c98"
-          nodeColor="#f5ebe0" 
-        />
+          <MiniMap
+            style={minimapStyle}
+            zoomable
+            pannable
+            maskColor="#9a8c98"
+            nodeColor="#f5ebe0"
+          />
           <Controls />
           <Background color="#4a4e69" gap={16} />
         </ReactFlow>
       </div>
-      <div style={{ display: "inline-block" }}>
-        <form
-          style={{ display: "inline-block" }}
-          onSubmit={(e) => handleSubmit(e)}
-        >
-          <input type="file" onChange={uploadFile} />
-          <br />
-          <label>
-            Program Input:
+      <div style={{ display: "inline-block", margin: "10px" }}>
+        <form className="form" onSubmit={(e) => handleSubmit(e)}>
+          <div className="form-group">
+            <input
+              className="form-control form-control-m"
+              type="file"
+              onChange={uploadFile}
+            />
+          </div>
+          <div className="form-group">
+            <label
+              style={{ width: "300px" }}
+              for="args"
+              className="form-label-sm"
+            >
+              Program Arguments:
+            </label>
             <input
               type="text"
               name="name"
+              className="form-control form-control-m"
+              id="args"
               onChange={(e) => handleArgInput(e)}
             />
-          </label>
-          <br />
-          <input type="submit" value="Submit" />
+          </div>
+          <div className="form-group">
+            <input
+              className="form-control btn btn-dark btn-lg btn-block"
+              type="submit"
+              value="Submit"
+            />
+          </div>
         </form>
         <div style={{ float: "right" }}>
           <Sequence sequence={sequence} />

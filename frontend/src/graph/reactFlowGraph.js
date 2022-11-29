@@ -52,10 +52,11 @@ function getReactFlowGraphEdges(response) {
       // colour in dynamic edges
       if (caller in dynamicEdges && callee in dynamicEdges[caller]) {
         newEdge.style = {
-          stroke: GRAPH_COLOURS.RED,
+          stroke: GRAPH_COLOURS.BLUE,
         };
-        newEdge.markerEnd.color = GRAPH_COLOURS.RED;
+        newEdge.markerEnd.color = GRAPH_COLOURS.BLUE;
         newEdge.animated = true;
+        newEdge.isDynamic = true;
       }
 
       edges.push(newEdge);
@@ -70,4 +71,54 @@ export function getReactFlowGraph(response) {
     nodes: getReactFlowGraphNodes(response),
     edges: getReactFlowGraphEdges(response),
   };
+}
+
+export function addCentralityEdgeColours(reactFlowGraph) {
+  const { nodes, edges } = reactFlowGraph;
+
+  console.log("EDGES");
+  console.log(edges);
+  let maxCentrality = Number.MIN_SAFE_INTEGER;
+  let nodeCentralityLookup = {};
+
+  for (let node of nodes) {
+    if (node.data.centrality > maxCentrality) {
+      maxCentrality = node.data.centrality;
+    }
+    nodeCentralityLookup[node.id] = node.data.centrality;
+  }
+
+  let midCentrality = maxCentrality / 2;
+
+  let newEdges = [];
+
+  for (let edge of edges) {
+    const { source } = edge;
+    const nodeCentrality = nodeCentralityLookup[source];
+
+    // colour outgoing edges of relatively central nodes red
+    let newEdge = {
+      ...edge,
+      style: {
+        stroke:
+          nodeCentrality > midCentrality && edge.isDynamic
+            ? GRAPH_COLOURS.RED
+            : edge.isDynamic
+            ? GRAPH_COLOURS.BLUE
+            : null,
+      },
+      markerEnd: {
+        ...edge.markerEnd,
+        color:
+          nodeCentrality > midCentrality && edge.isDynamic
+            ? GRAPH_COLOURS.RED
+            : edge.isDynamic
+            ? GRAPH_COLOURS.BLUE
+            : null,
+      },
+    };
+    newEdges.push(newEdge);
+  }
+
+  return { nodes, edges: newEdges };
 }

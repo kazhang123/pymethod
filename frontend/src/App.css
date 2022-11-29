@@ -7,6 +7,11 @@
   border-radius: 2px;
 }
 
+.react-flow__node-custom:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4),
+    0 2px 4px -1px rgba(0, 0, 0, 0.25);
+}
+
 .react-flow__node-custom .react-flow__handle {
   width: 24px;
   border-radius: 2px;

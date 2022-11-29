@@ -14,6 +14,7 @@ function getReactFlowGraphNodes(response) {
       type: "custom",
       style: {
         background: "#f5ebe0",
+        border: "3px solid #f5ebe0",
         color: "#4a4e69",
         fontSize: "12px",
         fontFamily: "Helvetica",

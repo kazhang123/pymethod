@@ -10,7 +10,10 @@ import ReactFlow, {
   ConnectionLineType,
 } from "reactflow";
 import dagre from "dagre";
-import { addCentralityEdgeColours, getReactFlowGraph } from "./reactFlowGraph";
+import {
+  addCentralityEdgeColours,
+  getReactFlowGraph,
+} from "./graph/reactFlowGraph";
 import {
   calculateCentralityScores,
   addCentralityScores,

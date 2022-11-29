@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import "./infoPanel.css";
 
-const InfoPanel = (props) => {
-  const [showInfoPanel, setShowInfoPanel] = useState(false);
-
+const InfoPanel = ({ showInfoPanel, setShowInfoPanel }) => {
   return (
     <div
       className={`info-panel ${showInfoPanel && "isOpen"}`}

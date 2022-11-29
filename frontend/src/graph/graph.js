@@ -68,7 +68,7 @@ export default class DiGraph {
             let vertex = queue.shift();
             let neighbours = this.AdjList.get(vertex);
             for (let i = 0; i < neighbours.length; i++) {
-                if (neighbours[i] && !visited[i]) {
+                if (!visited[i]) {
                     visited[i] = true;
                     distances[i] = distances[vertex] + 1;
                     queue.push(i);

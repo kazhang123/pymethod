@@ -53,6 +53,7 @@ const App = () => {
   const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [sequence, setSequence] = useState([]);
+  const [showInfoPanel, setShowInfoPanel] = useState(false);
 
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -129,6 +130,11 @@ const App = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (file == null) {
+      console.log("No File Chosen");
+      return;
+    }
+
     setSelectedNode(null);
 
     const data = new FormData();
@@ -165,6 +171,7 @@ const App = () => {
     setNodes(layoutedNodes);
     setEdges(layoutedEdges);
     setSequence(jsonResponse.callSequence);
+    setShowInfoPanel(true);
     setIsLoading(false);
   };
 
@@ -211,7 +218,10 @@ const App = () => {
           <p>{"Centrality Score: " + getSelectedCentralityScore()}</p>
         </div>
       )}
-      <InfoPanel />
+      <InfoPanel 
+        showInfoPanel={showInfoPanel}
+        setShowInfoPanel={setShowInfoPanel} 
+      />
       <div className="flow-container">
         <ReactFlow
           style={reactFlowStyle}
@@ -252,7 +262,7 @@ const App = () => {
           <div className="form-group">
             <label
               style={{ width: "300px" }}
-              for="args"
+              htmlFor="args"
               className="form-label-sm"
             >
               Program Arguments:

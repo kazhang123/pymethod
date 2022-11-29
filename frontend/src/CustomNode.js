@@ -1,21 +1,19 @@
 import React, { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 
-import "./customNode.css"
+import './customNode.css';
 
 const handleStyle = {
-    width: "64px",
-    position: Position.Left,
-    background: "#f5ebe0",
-  };
+  width: "64px",
+  position: Position.Left,
+  background: "#f5ebe0",
+};
 
-  const handleStyle2 = {
-    width: "64px",
-    position: Position.Bottom,
-    background: "#4a4e69",
-  };
-
-
+const handleStyle2 = {
+  width: "64px",
+  position: Position.Bottom,
+  background: "#4a4e69",
+};
 
 function CustomNode({ data }) {
   return (
